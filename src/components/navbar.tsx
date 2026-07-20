@@ -1,11 +1,13 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Search, LayoutDashboard, Menu } from "lucide-react";
+import { Search, LayoutDashboard, Menu, LogIn } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
 
 export function Navbar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
+  const { user, loading } = useAuth();
 
   const links = [
     { to: "/", label: "Home" },
@@ -50,13 +52,23 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Link
-            to="/dashboard"
-            className="hidden md:inline-flex items-center gap-2 rounded-lg bg-brand-gradient px-4 py-2 text-sm font-medium text-brand-foreground shadow-lg shadow-primary/20 transition-transform hover:scale-[1.02]"
-          >
-            <LayoutDashboard className="h-4 w-4" />
-            Dashboard
-          </Link>
+          {!loading && (user ? (
+            <Link
+              to="/dashboard"
+              className="hidden md:inline-flex items-center gap-2 rounded-lg bg-brand-gradient px-4 py-2 text-sm font-medium text-brand-foreground shadow-lg shadow-primary/20 transition-transform hover:scale-[1.02]"
+            >
+              <LayoutDashboard className="h-4 w-4" />
+              Dashboard
+            </Link>
+          ) : (
+            <Link
+              to="/auth"
+              className="hidden md:inline-flex items-center gap-2 rounded-lg bg-brand-gradient px-4 py-2 text-sm font-medium text-brand-foreground shadow-lg shadow-primary/20 transition-transform hover:scale-[1.02]"
+            >
+              <LogIn className="h-4 w-4" />
+              Sign in
+            </Link>
+          ))}
           <button
             onClick={() => setOpen((v) => !v)}
             className="md:hidden grid h-10 w-10 place-items-center rounded-lg border border-border"
@@ -79,6 +91,15 @@ export function Navbar() {
                 {l.label}
               </Link>
             ))}
+            {!user && (
+              <Link
+                to="/auth"
+                onClick={() => setOpen(false)}
+                className="rounded-lg px-4 py-3 text-sm font-semibold text-primary hover:bg-muted"
+              >
+                Sign in
+              </Link>
+            )}
           </div>
         </div>
       )}

@@ -1,33 +1,84 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, X, Sparkles, Star, Bell, Heart, Trophy } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { AnimatedBackground } from "@/components/animated-background";
 import { ProductCard } from "@/components/product-card";
-import { products, getProduct } from "@/lib/sample-data";
 import { formatINR } from "@/lib/format";
+import { useProduct, useProducts } from "@/services/catalog";
+import { useAuth } from "@/hooks/use-auth";
+import { useToggleWishlist, useWishlist, useCreateAlert } from "@/services/user-data";
 
 export const Route = createFileRoute("/product/$id")({
-  head: ({ params }) => {
-    const p = products.find((x) => x.id === params.id);
-    return {
-      meta: [
-        { title: p ? `${p.name} — CartSense` : "Product — CartSense" },
-        { name: "description", content: p ? `Compare ${p.name} prices across Amazon, Flipkart, Croma & Reliance.` : "Product details on CartSense." },
-      ],
-    };
-  },
+  head: () => ({
+    meta: [
+      { title: "Product — CartSense" },
+      { name: "description", content: "Compare prices across Amazon, Flipkart, Croma & Reliance Digital." },
+    ],
+  }),
   component: ProductDetails,
 });
 
 function ProductDetails() {
   const { id } = Route.useParams();
-  const product = getProduct(id);
+  const { data: product, isLoading } = useProduct(id);
+  const { data: all = [] } = useProducts();
+  const { user } = useAuth();
+  const { data: wishlist = [] } = useWishlist();
+  const toggleWishlist = useToggleWishlist();
+  const createAlert = useCreateAlert();
   const [active, setActive] = useState(0);
-  const bestPrice = Math.min(...product.stores.map((s) => s.price));
-  const similar = products.filter((p) => p.id !== product.id && p.category === product.category).slice(0, 4);
-  const fallback = similar.length ? similar : products.filter((p) => p.id !== product.id).slice(0, 4);
+
+  useEffect(() => setActive(0), [id]);
+
+  if (isLoading) {
+    return (
+      <div className="relative min-h-screen">
+        <AnimatedBackground />
+        <Navbar />
+        <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+          <div className="h-96 animate-pulse rounded-3xl bg-card/50" />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="relative min-h-screen">
+        <AnimatedBackground />
+        <Navbar />
+        <div className="mx-auto max-w-3xl px-4 py-24 text-center">
+          <h1 className="font-display text-3xl font-bold">Product not found</h1>
+          <p className="mt-2 text-muted-foreground">This product may have been removed.</p>
+          <Link to="/search" className="mt-6 inline-flex rounded-lg bg-brand-gradient px-5 py-2.5 text-sm font-semibold text-brand-foreground">
+            Back to search
+          </Link>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  const bestPrice = product.stores.length ? Math.min(...product.stores.map((s) => s.price)) : product.lowestPrice;
+  const similar = all.filter((p) => p.id !== product.id && p.category === product.category).slice(0, 4);
+  const fallback = similar.length ? similar : all.filter((p) => p.id !== product.id).slice(0, 4);
+  const isSaved = wishlist.some((w) => w.productId === product.id);
+
+  const handleSave = () => {
+    if (!user) { window.location.href = "/auth"; return; }
+    toggleWishlist.mutate({ productId: product.id, saved: isSaved });
+  };
+  const handleAlert = () => {
+    if (!user) { window.location.href = "/auth"; return; }
+    const val = window.prompt("Notify me when the price drops to (₹):", String(Math.round(bestPrice * 0.95)));
+    if (!val) return;
+    const target = Number(val);
+    if (!Number.isFinite(target) || target <= 0) return;
+    createAlert.mutate({ productId: product.id, targetPrice: target });
+  };
 
   return (
     <div className="relative min-h-screen">
@@ -45,7 +96,7 @@ function ProductDetails() {
           <div>
             <div className="overflow-hidden rounded-3xl border border-border bg-card">
               <img
-                src={product.images[active]}
+                src={product.images[active] ?? product.image}
                 alt={product.name}
                 className="aspect-square w-full object-cover"
               />
@@ -92,11 +143,14 @@ function ProductDetails() {
                 >
                   <Trophy className="h-4 w-4" /> Compare all stores
                 </Link>
-                <button className="inline-flex items-center gap-2 rounded-xl border border-border bg-background px-5 py-3 text-sm font-semibold hover:border-primary hover:text-primary">
+                <button onClick={handleAlert} className="inline-flex items-center gap-2 rounded-xl border border-border bg-background px-5 py-3 text-sm font-semibold hover:border-primary hover:text-primary">
                   <Bell className="h-4 w-4" /> Price alert
                 </button>
-                <button className="inline-flex items-center gap-2 rounded-xl border border-border bg-background px-5 py-3 text-sm font-semibold hover:border-primary hover:text-primary">
-                  <Heart className="h-4 w-4" /> Save
+                <button
+                  onClick={handleSave}
+                  className={`inline-flex items-center gap-2 rounded-xl border px-5 py-3 text-sm font-semibold ${isSaved ? "border-primary bg-primary/10 text-primary" : "border-border bg-background hover:border-primary hover:text-primary"}`}
+                >
+                  <Heart className={`h-4 w-4 ${isSaved ? "fill-current" : ""}`} /> {isSaved ? "Saved" : "Save"}
                 </button>
               </div>
             </div>
@@ -155,7 +209,7 @@ function ProductDetails() {
               {Object.entries(product.specs).map(([k, v]) => (
                 <div key={k} className="grid grid-cols-3 gap-4 py-3 text-sm">
                   <dt className="text-muted-foreground">{k}</dt>
-                  <dd className="col-span-2 font-medium">{v}</dd>
+                  <dd className="col-span-2 font-medium">{String(v)}</dd>
                 </div>
               ))}
             </dl>
