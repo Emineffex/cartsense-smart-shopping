@@ -6,7 +6,8 @@ import { Footer } from "@/components/footer";
 import { AnimatedBackground } from "@/components/animated-background";
 import { SearchBar } from "@/components/search-bar";
 import { ProductCard } from "@/components/product-card";
-import { products, categories, brands } from "@/lib/sample-data";
+import { categories, brands } from "@/lib/sample-data";
+import { useProducts } from "@/services/catalog";
 
 type SearchParams = { q?: string };
 
@@ -40,11 +41,10 @@ function SearchPage() {
   const [sort, setSort] = useState("relevance");
   const [filtersOpen, setFiltersOpen] = useState(false);
 
+  const { data: products = [], isLoading } = useProducts({ q, category, brand });
+
   const filtered = useMemo(() => {
     let list = products.filter((p) => {
-      if (q && !`${p.name} ${p.brand}`.toLowerCase().includes(q.toLowerCase())) return false;
-      if (category !== "All" && p.category !== category) return false;
-      if (brand.length && !brand.includes(p.brand)) return false;
       if (p.lowestPrice < priceRange[0] || p.lowestPrice > priceRange[1]) return false;
       if (p.rating < minRating) return false;
       return true;
@@ -62,7 +62,7 @@ function SearchPage() {
         break;
     }
     return list;
-  }, [q, category, brand, priceRange, minRating, sort]);
+  }, [products, priceRange, minRating, sort]);
 
   const toggleBrand = (b: string) =>
     setBrand((prev) => (prev.includes(b) ? prev.filter((x) => x !== b) : [...prev, b]));
@@ -159,7 +159,9 @@ function SearchPage() {
                 <h1 className="font-display text-2xl font-bold">
                   {q ? <>Results for "<span className="text-brand-gradient">{q}</span>"</> : "All products"}
                 </h1>
-                <p className="mt-1 text-sm text-muted-foreground">{filtered.length} products found</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {isLoading ? "Searching…" : `${filtered.length} products found`}
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -186,7 +188,13 @@ function SearchPage() {
               </div>
             </div>
 
-            {filtered.length === 0 ? (
+            {isLoading ? (
+              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="h-80 animate-pulse rounded-2xl border border-border bg-card/50" />
+                ))}
+              </div>
+            ) : filtered.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-border bg-card/50 p-16 text-center">
                 <p className="font-semibold">No products match your filters</p>
                 <p className="mt-1 text-sm text-muted-foreground">Try widening the price range or clearing filters.</p>

@@ -8,14 +8,14 @@ import {
   Zap,
   Package,
   ChevronDown,
-  Star,
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { AnimatedBackground } from "@/components/animated-background";
 import { SearchBar } from "@/components/search-bar";
 import { ProductCard } from "@/components/product-card";
-import { products, supportedStores, faqs } from "@/lib/sample-data";
+import { supportedStores, faqs } from "@/lib/sample-data";
+import { useProducts } from "@/services/catalog";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -41,6 +41,9 @@ const features = [
 ];
 
 function Landing() {
+  const { data: products = [] } = useProducts();
+  const trending = products.slice(0, 4);
+
   return (
     <div className="relative min-h-screen">
       <AnimatedBackground />
@@ -167,7 +170,7 @@ function Landing() {
           </Link>
         </div>
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {products.slice(0, 4).map((p) => (
+          {trending.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
         </div>
