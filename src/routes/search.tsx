@@ -206,7 +206,18 @@ function SearchPage() {
               </div>
             </div>
 
-            {isLoading ? (
+            {isError ? (
+              <div className="rounded-2xl border border-dashed border-destructive/40 bg-destructive/5 p-16 text-center">
+                <p className="font-semibold">Couldn't load products</p>
+                <p className="mt-1 text-sm text-muted-foreground">Please check your connection and try again.</p>
+                <button
+                  onClick={() => refetch()}
+                  className="mt-4 inline-flex rounded-lg bg-brand-gradient px-4 py-2 text-sm font-semibold text-brand-foreground"
+                >
+                  Retry
+                </button>
+              </div>
+            ) : isLoading ? (
               <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <div key={i} className="h-80 animate-pulse rounded-2xl border border-border bg-card/50" />
