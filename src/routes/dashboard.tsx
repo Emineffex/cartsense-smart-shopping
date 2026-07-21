@@ -216,6 +216,14 @@ function SavedProducts() {
 function PriceAlerts() {
   const { data: alerts = [], isLoading } = usePriceAlerts();
   const del = useDeleteAlert();
+  const update = useUpdateAlert();
+  const handleEdit = (id: string, current: number) => {
+    const val = window.prompt("Update target price (₹):", String(current));
+    if (!val) return;
+    const n = Number(val);
+    if (!Number.isFinite(n) || n <= 0) return;
+    update.mutate({ id, targetPrice: n });
+  };
   return (
     <SectionCard title="Price alerts" subtitle="We'll notify you when prices drop">
       {isLoading ? (
