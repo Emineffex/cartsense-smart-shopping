@@ -6,7 +6,7 @@ import { Footer } from "@/components/footer";
 import { AnimatedBackground } from "@/components/animated-background";
 import { ProductCard } from "@/components/product-card";
 import { formatINR } from "@/lib/format";
-import { useProduct, useProducts } from "@/services/catalog";
+import { useProduct, useProducts, usePriceHistory, type PricePoint } from "@/services/catalog";
 import { useAuth } from "@/hooks/use-auth";
 import { useToggleWishlist, useWishlist, useCreateAlert } from "@/services/user-data";
 
