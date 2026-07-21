@@ -30,6 +30,7 @@ const sortOptions = [
   { value: "price-desc", label: "Price: High to Low" },
   { value: "rating", label: "Top Rated" },
   { value: "discount", label: "Biggest Discount" },
+  { value: "newest", label: "Newest" },
 ];
 
 function SearchPage() {
@@ -38,15 +39,17 @@ function SearchPage() {
   const [brand, setBrand] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 200000]);
   const [minRating, setMinRating] = useState(0);
+  const [inStockOnly, setInStockOnly] = useState(false);
   const [sort, setSort] = useState("relevance");
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const { data: products = [], isLoading } = useProducts({ q, category, brand });
+  const { data: products = [], isLoading, isError, refetch } = useProducts({ q, category, brand });
 
   const filtered = useMemo(() => {
     let list = products.filter((p) => {
       if (p.lowestPrice < priceRange[0] || p.lowestPrice > priceRange[1]) return false;
       if (p.rating < minRating) return false;
+      if (inStockOnly && p.stores.length === 0) return false;
       return true;
     });
     switch (sort) {
@@ -60,9 +63,12 @@ function SearchPage() {
           return db - da;
         });
         break;
+      case "newest":
+        list = [...list].sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""));
+        break;
     }
     return list;
-  }, [products, priceRange, minRating, sort]);
+  }, [products, priceRange, minRating, inStockOnly, sort]);
 
   const toggleBrand = (b: string) =>
     setBrand((prev) => (prev.includes(b) ? prev.filter((x) => x !== b) : [...prev, b]));
