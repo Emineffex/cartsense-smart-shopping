@@ -317,8 +317,8 @@ function PriceChart({ points }: { points: PricePoint[] }) {
       <svg viewBox={`0 0 ${w} ${h}`} className="w-full">
         <defs>
           <linearGradient id="ph-fill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
+            <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="var(--primary)" stopOpacity="0" />
           </linearGradient>
         </defs>
         {Array.from({ length: ticks + 1 }).map((_, i) => {
@@ -332,7 +332,7 @@ function PriceChart({ points }: { points: PricePoint[] }) {
           );
         })}
         <path d={area} fill="url(#ph-fill)" />
-        <path d={path} fill="none" stroke="hsl(var(--primary))" strokeWidth={2} />
+        <path d={path} fill="none" stroke="var(--primary)" strokeWidth={2} />
         <text x={pad.l} y={h - 8} className="fill-muted-foreground text-[10px]">{first.date}</text>
         <text x={w - pad.r} y={h - 8} textAnchor="end" className="fill-muted-foreground text-[10px]">{last.date}</text>
       </svg>
