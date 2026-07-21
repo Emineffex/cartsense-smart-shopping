@@ -201,6 +201,10 @@ function ProductDetails() {
           </div>
         </section>
 
+        {/* Price history */}
+        <PriceHistorySection productId={product.id} />
+
+
         {/* Specs + Pros/Cons */}
         <section className="mt-14 grid gap-8 lg:grid-cols-2">
           <div className="rounded-2xl border border-border bg-card p-6">
