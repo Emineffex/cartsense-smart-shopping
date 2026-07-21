@@ -20,6 +20,9 @@ import {
   useToggleWishlist,
   usePriceAlerts,
   useDeleteAlert,
+  useUpdateAlert,
+  useProfile,
+  useUpdateProfile,
 } from "@/services/user-data";
 
 export const Route = createFileRoute("/dashboard")({
@@ -213,6 +216,14 @@ function SavedProducts() {
 function PriceAlerts() {
   const { data: alerts = [], isLoading } = usePriceAlerts();
   const del = useDeleteAlert();
+  const update = useUpdateAlert();
+  const handleEdit = (id: string, current: number) => {
+    const val = window.prompt("Update target price (₹):", String(current));
+    if (!val) return;
+    const n = Number(val);
+    if (!Number.isFinite(n) || n <= 0) return;
+    update.mutate({ id, targetPrice: n });
+  };
   return (
     <SectionCard title="Price alerts" subtitle="We'll notify you when prices drop">
       {isLoading ? (
@@ -241,6 +252,12 @@ function PriceAlerts() {
                     {formatINR(diff)} to go
                   </span>
                 )}
+                <button
+                  onClick={() => handleEdit(a.id, a.targetPrice)}
+                  className="rounded-lg border border-border px-2.5 py-1 text-xs font-semibold text-muted-foreground hover:border-primary hover:text-primary"
+                >
+                  Edit
+                </button>
                 <button
                   onClick={() => del.mutate(a.id)}
                   className="text-muted-foreground hover:text-destructive"
@@ -288,11 +305,38 @@ function RecentlyViewed() {
 }
 
 function SettingsPanel({ email, displayName }: { email: string; displayName: string }) {
+  const { data: profile } = useProfile();
+  const update = useUpdateProfile();
+  const [name, setName] = useState(profile?.display_name ?? displayName);
+  const [saved, setSaved] = useState(false);
+  useEffect(() => {
+    if (profile?.display_name) setName(profile.display_name);
+  }, [profile?.display_name]);
+  const handleSave = async () => {
+    if (!name.trim()) return;
+    await update.mutateAsync({ displayName: name.trim() });
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
   return (
     <SectionCard title="Settings" subtitle="Manage your preferences">
       <div className="space-y-6">
-        <Field label="Display name" defaultValue={displayName} />
-        <Field label="Email address" defaultValue={email} readOnly />
+        <div>
+          <label className="text-sm font-semibold">Display name</label>
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="mt-2 w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary"
+          />
+        </div>
+        <div>
+          <label className="text-sm font-semibold">Email address</label>
+          <input
+            defaultValue={email}
+            readOnly
+            className="mt-2 w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm outline-none read-only:opacity-70"
+          />
+        </div>
         <div>
           <p className="text-sm font-semibold">Notifications</p>
           <div className="mt-3 space-y-2">
@@ -307,6 +351,17 @@ function SettingsPanel({ email, displayName }: { email: string; displayName: str
               </label>
             ))}
           </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleSave}
+            disabled={update.isPending}
+            className="rounded-lg bg-brand-gradient px-4 py-2 text-sm font-semibold text-brand-foreground disabled:opacity-60"
+          >
+            {update.isPending ? "Saving…" : "Save changes"}
+          </button>
+          {saved && <span className="text-xs font-semibold text-emerald-600">Saved</span>}
+          {update.isError && <span className="text-xs font-semibold text-destructive">Failed to save</span>}
         </div>
       </div>
     </SectionCard>
@@ -336,15 +391,3 @@ function EmptyState({ message, cta, to }: { message: string; cta: string; to: st
   );
 }
 
-function Field({ label, defaultValue, readOnly }: { label: string; defaultValue: string; readOnly?: boolean }) {
-  return (
-    <div>
-      <label className="text-sm font-semibold">{label}</label>
-      <input
-        defaultValue={defaultValue}
-        readOnly={readOnly}
-        className="mt-2 w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary read-only:opacity-70"
-      />
-    </div>
-  );
-}
