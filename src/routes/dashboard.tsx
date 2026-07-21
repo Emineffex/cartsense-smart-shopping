@@ -305,11 +305,38 @@ function RecentlyViewed() {
 }
 
 function SettingsPanel({ email, displayName }: { email: string; displayName: string }) {
+  const { data: profile } = useProfile();
+  const update = useUpdateProfile();
+  const [name, setName] = useState(profile?.display_name ?? displayName);
+  const [saved, setSaved] = useState(false);
+  useEffect(() => {
+    if (profile?.display_name) setName(profile.display_name);
+  }, [profile?.display_name]);
+  const handleSave = async () => {
+    if (!name.trim()) return;
+    await update.mutateAsync({ displayName: name.trim() });
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
   return (
     <SectionCard title="Settings" subtitle="Manage your preferences">
       <div className="space-y-6">
-        <Field label="Display name" defaultValue={displayName} />
-        <Field label="Email address" defaultValue={email} readOnly />
+        <div>
+          <label className="text-sm font-semibold">Display name</label>
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="mt-2 w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary"
+          />
+        </div>
+        <div>
+          <label className="text-sm font-semibold">Email address</label>
+          <input
+            defaultValue={email}
+            readOnly
+            className="mt-2 w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm outline-none read-only:opacity-70"
+          />
+        </div>
         <div>
           <p className="text-sm font-semibold">Notifications</p>
           <div className="mt-3 space-y-2">
@@ -324,6 +351,17 @@ function SettingsPanel({ email, displayName }: { email: string; displayName: str
               </label>
             ))}
           </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleSave}
+            disabled={update.isPending}
+            className="rounded-lg bg-brand-gradient px-4 py-2 text-sm font-semibold text-brand-foreground disabled:opacity-60"
+          >
+            {update.isPending ? "Saving…" : "Save changes"}
+          </button>
+          {saved && <span className="text-xs font-semibold text-emerald-600">Saved</span>}
+          {update.isError && <span className="text-xs font-semibold text-destructive">Failed to save</span>}
         </div>
       </div>
     </SectionCard>
