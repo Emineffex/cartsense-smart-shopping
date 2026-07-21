@@ -391,15 +391,3 @@ function EmptyState({ message, cta, to }: { message: string; cta: string; to: st
   );
 }
 
-function Field({ label, defaultValue, readOnly }: { label: string; defaultValue: string; readOnly?: boolean }) {
-  return (
-    <div>
-      <label className="text-sm font-semibold">{label}</label>
-      <input
-        defaultValue={defaultValue}
-        readOnly={readOnly}
-        className="mt-2 w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary read-only:opacity-70"
-      />
-    </div>
-  );
-}
