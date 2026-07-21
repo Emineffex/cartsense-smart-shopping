@@ -20,6 +20,9 @@ import {
   useToggleWishlist,
   usePriceAlerts,
   useDeleteAlert,
+  useUpdateAlert,
+  useProfile,
+  useUpdateProfile,
 } from "@/services/user-data";
 
 export const Route = createFileRoute("/dashboard")({
