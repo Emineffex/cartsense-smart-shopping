@@ -155,3 +155,34 @@ export function useProductSummaries() {
     queryFn: fetchProductSummaries,
   });
 }
+
+export interface PricePoint {
+  date: string;
+  price: number;
+}
+
+export async function fetchPriceHistory(productId: string): Promise<PricePoint[]> {
+  const { data, error } = await supabase
+    .from("price_history")
+    .select("captured_at, price")
+    .eq("product_id", productId)
+    .order("captured_at", { ascending: true });
+  if (error) throw error;
+  // Aggregate to daily minimum (best price of the day across stores)
+  const byDay = new Map<string, number>();
+  for (const row of data ?? []) {
+    const day = String(row.captured_at).slice(0, 10);
+    const price = Number(row.price);
+    const prev = byDay.get(day);
+    if (prev === undefined || price < prev) byDay.set(day, price);
+  }
+  return Array.from(byDay.entries()).map(([date, price]) => ({ date, price }));
+}
+
+export function usePriceHistory(productId: string | undefined) {
+  return useQuery({
+    queryKey: ["price-history", productId],
+    queryFn: () => fetchPriceHistory(productId!),
+    enabled: !!productId,
+  });
+}
