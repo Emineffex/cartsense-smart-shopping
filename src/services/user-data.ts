@@ -145,6 +145,20 @@ export function useCreateAlert() {
   });
 }
 
+export function useUpdateAlert() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, targetPrice }: { id: string; targetPrice: number }) => {
+      const { error } = await supabase
+        .from("price_alerts")
+        .update({ target_price: targetPrice, status: "watching" })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["alerts"] }),
+  });
+}
+
 export function useDeleteAlert() {
   const qc = useQueryClient();
   return useMutation({
@@ -153,5 +167,38 @@ export function useDeleteAlert() {
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["alerts"] }),
+  });
+}
+
+export function useProfile() {
+  const { user } = useAuth();
+  return useQuery({
+    queryKey: ["profile", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, display_name, avatar_url")
+        .eq("id", user!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+export function useUpdateProfile() {
+  const { user } = useAuth();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ displayName }: { displayName: string }) => {
+      if (!user) throw new Error("Sign in required");
+      const { error } = await supabase
+        .from("profiles")
+        .update({ display_name: displayName })
+        .eq("id", user.id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["profile"] }),
   });
 }
