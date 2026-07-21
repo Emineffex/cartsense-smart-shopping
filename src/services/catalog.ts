@@ -29,6 +29,7 @@ interface DbProduct {
   reviews_count: number;
   lowest_price: number;
   highest_price: number;
+  created_at?: string;
   product_offers?: DbOffer[];
 }
 
