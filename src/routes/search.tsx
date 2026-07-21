@@ -155,6 +155,18 @@ function SearchPage() {
                   ))}
                 </div>
               </FilterSection>
+
+              <FilterSection title="Availability">
+                <label className="flex cursor-pointer items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={inStockOnly}
+                    onChange={(e) => setInStockOnly(e.target.checked)}
+                    className="accent-primary"
+                  />
+                  In stock only
+                </label>
+              </FilterSection>
             </div>
           </aside>
 
