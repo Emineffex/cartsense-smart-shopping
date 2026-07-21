@@ -31,6 +31,7 @@ export interface Product {
   pros: string[];
   cons: string[];
   stores: StorePrice[];
+  createdAt?: string | null;
 }
 
 export const categories = [
