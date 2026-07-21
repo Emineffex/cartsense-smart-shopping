@@ -253,6 +253,12 @@ function PriceAlerts() {
                   </span>
                 )}
                 <button
+                  onClick={() => handleEdit(a.id, a.targetPrice)}
+                  className="rounded-lg border border-border px-2.5 py-1 text-xs font-semibold text-muted-foreground hover:border-primary hover:text-primary"
+                >
+                  Edit
+                </button>
+                <button
                   onClick={() => del.mutate(a.id)}
                   className="text-muted-foreground hover:text-destructive"
                   aria-label="Remove"
