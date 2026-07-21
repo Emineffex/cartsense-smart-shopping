@@ -262,3 +262,80 @@ function ProductDetails() {
     </div>
   );
 }
+
+function PriceHistorySection({ productId }: { productId: string }) {
+  const { data: points = [], isLoading, isError } = usePriceHistory(productId);
+  return (
+    <section className="mt-14">
+      <h2 className="font-display text-2xl font-bold">Price history</h2>
+      <p className="mt-1 text-sm text-muted-foreground">Best daily price across supported stores.</p>
+      <div className="mt-4 rounded-2xl border border-border bg-card p-6">
+        {isLoading ? (
+          <div className="h-56 animate-pulse rounded-xl bg-muted/50" />
+        ) : isError ? (
+          <p className="text-sm text-muted-foreground">Couldn't load price history.</p>
+        ) : points.length < 2 ? (
+          <p className="text-sm text-muted-foreground">Not enough data yet to chart price history.</p>
+        ) : (
+          <PriceChart points={points} />
+        )}
+      </div>
+    </section>
+  );
+}
+
+function PriceChart({ points }: { points: PricePoint[] }) {
+  const w = 720;
+  const h = 220;
+  const pad = { l: 48, r: 16, t: 16, b: 28 };
+  const prices = points.map((p) => p.price);
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
+  const range = Math.max(max - min, 1);
+  const innerW = w - pad.l - pad.r;
+  const innerH = h - pad.t - pad.b;
+  const x = (i: number) => pad.l + (i * innerW) / Math.max(points.length - 1, 1);
+  const y = (v: number) => pad.t + innerH - ((v - min) / range) * innerH;
+  const path = points.map((p, i) => `${i === 0 ? "M" : "L"} ${x(i)} ${y(p.price)}`).join(" ");
+  const area = `${path} L ${x(points.length - 1)} ${pad.t + innerH} L ${x(0)} ${pad.t + innerH} Z`;
+  const ticks = 4;
+  const format = (n: number) => `₹${Math.round(n).toLocaleString("en-IN")}`;
+  const first = points[0];
+  const last = points[points.length - 1];
+  const diff = last.price - first.price;
+  const pct = (diff / first.price) * 100;
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-baseline gap-3 text-sm">
+        <span className="font-semibold">Current: {format(last.price)}</span>
+        <span className="text-muted-foreground">Low: {format(min)}</span>
+        <span className="text-muted-foreground">High: {format(max)}</span>
+        <span className={`ml-auto font-semibold ${diff <= 0 ? "text-emerald-600" : "text-primary"}`}>
+          {diff <= 0 ? "▼" : "▲"} {format(Math.abs(diff))} ({pct.toFixed(1)}%)
+        </span>
+      </div>
+      <svg viewBox={`0 0 ${w} ${h}`} className="w-full">
+        <defs>
+          <linearGradient id="ph-fill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        {Array.from({ length: ticks + 1 }).map((_, i) => {
+          const v = min + (range * (ticks - i)) / ticks;
+          const yy = pad.t + (i * innerH) / ticks;
+          return (
+            <g key={i}>
+              <line x1={pad.l} x2={w - pad.r} y1={yy} y2={yy} stroke="currentColor" className="text-border" strokeDasharray="3 3" />
+              <text x={pad.l - 8} y={yy + 4} textAnchor="end" className="fill-muted-foreground text-[10px]">{format(v)}</text>
+            </g>
+          );
+        })}
+        <path d={area} fill="url(#ph-fill)" />
+        <path d={path} fill="none" stroke="hsl(var(--primary))" strokeWidth={2} />
+        <text x={pad.l} y={h - 8} className="fill-muted-foreground text-[10px]">{first.date}</text>
+        <text x={w - pad.r} y={h - 8} textAnchor="end" className="fill-muted-foreground text-[10px]">{last.date}</text>
+      </svg>
+    </div>
+  );
+}
