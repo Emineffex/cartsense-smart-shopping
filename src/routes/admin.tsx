@@ -23,7 +23,7 @@ export const Route = createFileRoute("/admin")({
 const tabs: ReadonlyArray<{ to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }> = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/deals", label: "Featured Deals", icon: Tag },
-  { to: "/admin/coupons", label: "Ticket" as unknown as string && "Coupons", icon: Ticket },
+  { to: "/admin/coupons", label: "Coupons", icon: Ticket },
   { to: "/admin/stores", label: "Stores", icon: Store },
   { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
 ];
