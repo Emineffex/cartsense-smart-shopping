@@ -1,13 +1,15 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Search, LayoutDashboard, Menu, LogIn } from "lucide-react";
+import { Search, LayoutDashboard, Menu, LogIn, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
+import { useIsAdmin } from "@/hooks/use-admin";
 
 export function Navbar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
   const { user, loading } = useAuth();
+  const { data: isAdmin } = useIsAdmin();
 
   const links = [
     { to: "/", label: "Home" },
@@ -52,6 +54,15 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2">
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className="hidden md:inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm font-medium text-muted-foreground hover:border-primary hover:text-primary"
+            >
+              <ShieldCheck className="h-4 w-4" />
+              Admin
+            </Link>
+          )}
           {!loading && (user ? (
             <Link
               to="/dashboard"
