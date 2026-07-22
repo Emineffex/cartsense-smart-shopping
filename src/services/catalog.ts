@@ -12,7 +12,7 @@ interface DbOffer {
   bank_offer: string | null;
   best_deal: boolean;
   url: string | null;
-  stores: { name: string } | { name: string }[] | null;
+  stores: { id: string; name: string } | { id: string; name: string }[] | null;
 }
 
 interface DbProduct {
