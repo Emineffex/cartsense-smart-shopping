@@ -46,6 +46,11 @@ function SearchPage() {
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const { data: products = [], isLoading, isError, refetch } = useProducts({ q, category, brand });
+  const { user } = useAuth();
+  useEffect(() => {
+    if (q && q.trim()) logSearch(q, products.length, user?.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [q]);
 
   const filtered = useMemo(() => {
     let list = products.filter((p) => {
