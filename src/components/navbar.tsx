@@ -1,13 +1,15 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Search, LayoutDashboard, Menu, LogIn } from "lucide-react";
+import { Search, LayoutDashboard, Menu, LogIn, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
+import { useIsAdmin } from "@/hooks/use-admin";
 
 export function Navbar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
   const { user, loading } = useAuth();
+  const { data: isAdmin } = useIsAdmin();
 
   const links = [
     { to: "/", label: "Home" },
