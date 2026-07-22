@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SlidersHorizontal, X } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
@@ -8,6 +8,8 @@ import { SearchBar } from "@/components/search-bar";
 import { ProductCard } from "@/components/product-card";
 import { categories, brands } from "@/lib/sample-data";
 import { useProducts } from "@/services/catalog";
+import { logSearch } from "@/services/telemetry";
+import { useAuth } from "@/hooks/use-auth";
 
 type SearchParams = { q?: string };
 
