@@ -54,6 +54,15 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2">
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className="hidden md:inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm font-medium text-muted-foreground hover:border-primary hover:text-primary"
+            >
+              <ShieldCheck className="h-4 w-4" />
+              Admin
+            </Link>
+          )}
           {!loading && (user ? (
             <Link
               to="/dashboard"
