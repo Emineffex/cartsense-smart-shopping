@@ -5,6 +5,7 @@ export type Store = "Amazon" | "Flipkart" | "Croma" | "Reliance Digital";
 
 export interface StorePrice {
   store: Store;
+  storeId?: string;
   price: number;
   originalPrice: number;
   discount: number;
