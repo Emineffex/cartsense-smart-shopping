@@ -56,7 +56,7 @@ function DealsPage() {
                 <input
                   type="checkbox"
                   checked={d.is_active}
-                  onChange={(e) => save.mutate({ id: d.id, ...d, is_active: e.target.checked })}
+                  onChange={(e) => save.mutate({ ...d, is_active: e.target.checked })}
                   className="h-4 w-4 accent-primary"
                 />
                 {d.is_active ? "Active" : "Inactive"}
