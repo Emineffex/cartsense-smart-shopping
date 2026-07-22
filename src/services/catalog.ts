@@ -38,10 +38,11 @@ const asRecord = (v: unknown): Record<string, string> =>
   v && typeof v === "object" ? (v as Record<string, string>) : {};
 
 function mapOffer(o: DbOffer): StorePrice {
-  const storeName =
-    (Array.isArray(o.stores) ? o.stores[0]?.name : o.stores?.name) ?? "Amazon";
+  const store = Array.isArray(o.stores) ? o.stores[0] : o.stores;
+  const storeName = store?.name ?? "Amazon";
   return {
     store: storeName as Store,
+    storeId: store?.id,
     price: Number(o.price),
     originalPrice: Number(o.original_price),
     discount: o.discount,
@@ -78,7 +79,7 @@ function mapProduct(p: DbProduct): Product {
 }
 
 const PRODUCT_SELECT =
-  "id,name,brand,category,image,images,specs,pros,cons,rating,reviews_count,lowest_price,highest_price,created_at,product_offers(price,original_price,discount,rating,reviews,delivery,bank_offer,best_deal,url,stores(name))";
+  "id,name,brand,category,image,images,specs,pros,cons,rating,reviews_count,lowest_price,highest_price,created_at,product_offers(price,original_price,discount,rating,reviews,delivery,bank_offer,best_deal,url,stores(id,name))";
 
 export interface CatalogFilters {
   q?: string;

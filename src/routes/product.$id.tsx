@@ -9,6 +9,7 @@ import { formatINR } from "@/lib/format";
 import { useProduct, useProducts, usePriceHistory, type PricePoint } from "@/services/catalog";
 import { useAuth } from "@/hooks/use-auth";
 import { useToggleWishlist, useWishlist, useCreateAlert } from "@/services/user-data";
+import { logStoreClick } from "@/services/telemetry";
 
 export const Route = createFileRoute("/product/$id")({
   head: () => ({
@@ -193,7 +194,13 @@ function ProductDetails() {
                 <p className="mt-3 text-2xl font-bold">{formatINR(s.price)}</p>
                 <p className="text-xs text-muted-foreground line-through">{formatINR(s.originalPrice)}</p>
                 <p className="mt-2 text-xs text-primary font-semibold">{s.discount}% off · {s.delivery}</p>
-                <a href={s.url} className="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-foreground px-3 py-2 text-xs font-semibold text-background hover:opacity-90">
+                <a
+                  href={s.url}
+                  onClick={() => { if (s.storeId) void logStoreClick(s.storeId, product.id, user?.id); }}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-foreground px-3 py-2 text-xs font-semibold text-background hover:opacity-90"
+                >
                   Buy on {s.store}
                 </a>
               </div>
