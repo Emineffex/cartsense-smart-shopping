@@ -1,0 +1,1 @@
+ALTER VIEW public.admin_users SET (security_invoker = true);
