@@ -6,10 +6,46 @@ import { Footer } from "@/components/footer";
 import { AnimatedBackground } from "@/components/animated-background";
 import { SearchBar } from "@/components/search-bar";
 import { ProductCard } from "@/components/product-card";
-import { categories, brands } from "@/lib/sample-data";
-import { useProducts } from "@/services/catalog";
+import { categories, brands, type Product, type Store, type StorePrice } from "@/lib/sample-data";
+import { useProviderSearch } from "@/services/providers";
+import type { MergedProduct } from "@/services/providers";
 import { logSearch } from "@/services/telemetry";
 import { useAuth } from "@/hooks/use-auth";
+
+// Adapt merged provider results to the existing UI `Product` shape so
+// ProductCard / Compare / Details keep working with zero UI changes.
+function toProduct(m: MergedProduct): Product {
+  const stores: StorePrice[] = m.offers.map((o, i) => ({
+    store: o.store as Store,
+    storeId: o.storeId,
+    price: o.price,
+    originalPrice: o.originalPrice,
+    discount: o.originalPrice > 0 ? Math.round(((o.originalPrice - o.price) / o.originalPrice) * 100) : 0,
+    rating: o.rating,
+    reviews: o.reviewCount,
+    delivery: o.deliveryTime,
+    bankOffer: o.bankOffers[0]?.description ?? "",
+    bestDeal: i === 0,
+    url: o.productUrl,
+  }));
+  return {
+    id: m.key,
+    name: m.title,
+    brand: m.brand,
+    category: m.category,
+    image: m.image,
+    images: m.images,
+    lowestPrice: m.lowestPrice,
+    highestPrice: m.highestPrice,
+    rating: m.rating,
+    reviews: m.reviewCount,
+    specs: m.specifications,
+    pros: [],
+    cons: [],
+    stores,
+    createdAt: null,
+  };
+}
 
 type SearchParams = { q?: string };
 
