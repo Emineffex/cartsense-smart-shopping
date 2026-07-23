@@ -81,7 +81,11 @@ function SearchPage() {
   const [sort, setSort] = useState("relevance");
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const { data: products = [], isLoading, isError, refetch } = useProducts({ q, category, brand });
+  const { data: result, isLoading, isError, refetch } = useProviderSearch({ q, category, brand });
+  const products = useMemo<Product[]>(
+    () => (result?.products ?? []).map(toProduct),
+    [result]
+  );
   const { user } = useAuth();
   useEffect(() => {
     if (q && q.trim()) logSearch(q, products.length, user?.id);
