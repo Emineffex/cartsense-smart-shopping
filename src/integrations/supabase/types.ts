@@ -14,6 +14,64 @@ export type Database = {
   }
   public: {
     Tables: {
+      affiliate_clicks: {
+        Row: {
+          created_at: string
+          destination_url: string | null
+          id: string
+          offer_id: string | null
+          product_id: string | null
+          referrer: string | null
+          store_id: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          destination_url?: string | null
+          id?: string
+          offer_id?: string | null
+          product_id?: string | null
+          referrer?: string | null
+          store_id: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          destination_url?: string | null
+          id?: string
+          offer_id?: string | null
+          product_id?: string | null
+          referrer?: string | null
+          store_id?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_clicks_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "product_offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_clicks_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_clicks_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coupons: {
         Row: {
           code: string
@@ -320,6 +378,48 @@ export type Database = {
           display_name?: string | null
           id?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      provider_sync_logs: {
+        Row: {
+          created_at: string
+          duration_ms: number | null
+          error_message: string | null
+          errors_count: number
+          finished_at: string | null
+          id: string
+          offers_synced: number
+          products_synced: number
+          provider: string
+          started_at: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          errors_count?: number
+          finished_at?: string | null
+          id?: string
+          offers_synced?: number
+          products_synced?: number
+          provider: string
+          started_at?: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          errors_count?: number
+          finished_at?: string | null
+          id?: string
+          offers_synced?: number
+          products_synced?: number
+          provider?: string
+          started_at?: string
+          status?: string
         }
         Relationships: []
       }
