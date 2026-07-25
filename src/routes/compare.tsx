@@ -34,6 +34,11 @@ function ComparePage() {
   }, [summaries, selected, id]);
 
   const { data: product } = useProduct(selected);
+  const { user } = useAuth();
+  const trackBuy = (s: { storeId?: string; store: string; url: string }) => {
+    if (!s.storeId || !product) return;
+    logAffiliateClick({ storeId: s.storeId, productId: product.id, provider: s.store, destinationUrl: s.url, userId: user?.id });
+  };
 
   return (
     <div className="relative min-h-screen">
