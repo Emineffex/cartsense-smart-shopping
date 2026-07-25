@@ -9,7 +9,7 @@ import { formatINR } from "@/lib/format";
 import { useProduct, useProducts, usePriceHistory, type PricePoint } from "@/services/catalog";
 import { useAuth } from "@/hooks/use-auth";
 import { useToggleWishlist, useWishlist, useCreateAlert } from "@/services/user-data";
-import { logStoreClick } from "@/services/telemetry";
+import { logStoreClick, logAffiliateClick } from "@/services/telemetry";
 
 export const Route = createFileRoute("/product/$id")({
   head: () => ({
