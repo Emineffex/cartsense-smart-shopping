@@ -16,34 +16,43 @@ export type Database = {
     Tables: {
       affiliate_clicks: {
         Row: {
+          clicked_at: string
           created_at: string
           destination_url: string | null
           id: string
           offer_id: string | null
           product_id: string | null
+          provider: string | null
           referrer: string | null
+          session_id: string | null
           store_id: string
           user_agent: string | null
           user_id: string | null
         }
         Insert: {
+          clicked_at?: string
           created_at?: string
           destination_url?: string | null
           id?: string
           offer_id?: string | null
           product_id?: string | null
+          provider?: string | null
           referrer?: string | null
+          session_id?: string | null
           store_id: string
           user_agent?: string | null
           user_id?: string | null
         }
         Update: {
+          clicked_at?: string
           created_at?: string
           destination_url?: string | null
           id?: string
           offer_id?: string | null
           product_id?: string | null
+          provider?: string | null
           referrer?: string | null
+          session_id?: string | null
           store_id?: string
           user_agent?: string | null
           user_id?: string | null
