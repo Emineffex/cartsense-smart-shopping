@@ -6,6 +6,8 @@ import { AnimatedBackground } from "@/components/animated-background";
 import { formatINR } from "@/lib/format";
 import { useEffect, useState } from "react";
 import { useProduct, useProductSummaries } from "@/services/catalog";
+import { logAffiliateClick } from "@/services/telemetry";
+import { useAuth } from "@/hooks/use-auth";
 
 type Search = { id?: string };
 
