@@ -220,6 +220,7 @@ function ComparePage() {
                   </div>
                   <a
                     href={s.url}
+                    onClick={() => trackBuy(s)}
                     className={`mt-4 inline-flex w-full items-center justify-center rounded-lg px-4 py-2.5 text-sm font-semibold ${
                       s.bestDeal
                         ? "bg-brand-gradient text-brand-foreground shadow-lg shadow-primary/25"
