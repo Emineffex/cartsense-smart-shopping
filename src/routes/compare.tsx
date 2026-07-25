@@ -6,6 +6,8 @@ import { AnimatedBackground } from "@/components/animated-background";
 import { formatINR } from "@/lib/format";
 import { useEffect, useState } from "react";
 import { useProduct, useProductSummaries } from "@/services/catalog";
+import { logAffiliateClick } from "@/services/telemetry";
+import { useAuth } from "@/hooks/use-auth";
 
 type Search = { id?: string };
 
@@ -32,6 +34,11 @@ function ComparePage() {
   }, [summaries, selected, id]);
 
   const { data: product } = useProduct(selected);
+  const { user } = useAuth();
+  const trackBuy = (s: { storeId?: string; store: string; url: string }) => {
+    if (!s.storeId || !product) return;
+    logAffiliateClick({ storeId: s.storeId, productId: product.id, provider: s.store, destinationUrl: s.url, userId: user?.id });
+  };
 
   return (
     <div className="relative min-h-screen">
@@ -151,6 +158,7 @@ function ComparePage() {
                       <td className="px-4 py-4">
                         <a
                           href={s.url}
+                          onClick={() => trackBuy(s)}
                           className={`inline-flex whitespace-nowrap rounded-lg px-4 py-2 text-xs font-semibold transition-transform hover:scale-[1.02] ${
                             s.bestDeal
                               ? "bg-brand-gradient text-brand-foreground shadow-lg shadow-primary/25"
@@ -212,6 +220,7 @@ function ComparePage() {
                   </div>
                   <a
                     href={s.url}
+                    onClick={() => trackBuy(s)}
                     className={`mt-4 inline-flex w-full items-center justify-center rounded-lg px-4 py-2.5 text-sm font-semibold ${
                       s.bestDeal
                         ? "bg-brand-gradient text-brand-foreground shadow-lg shadow-primary/25"
