@@ -158,6 +158,7 @@ function ComparePage() {
                       <td className="px-4 py-4">
                         <a
                           href={s.url}
+                          onClick={() => trackBuy(s)}
                           className={`inline-flex whitespace-nowrap rounded-lg px-4 py-2 text-xs font-semibold transition-transform hover:scale-[1.02] ${
                             s.bestDeal
                               ? "bg-brand-gradient text-brand-foreground shadow-lg shadow-primary/25"
