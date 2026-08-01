@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { OFFER_LINK_COLUMNS, resolveOfferUrl } from "../affiliate-link";
 import type { ProductProvider, ProviderOffer, ProviderQuery, StoreName } from "./types";
 
 /**
