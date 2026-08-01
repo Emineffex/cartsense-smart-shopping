@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { OFFER_LINK_COLUMNS, resolveOfferUrl } from "./affiliate-link";
 import type { Product, Store, StorePrice } from "@/lib/sample-data";
 
 interface DbOffer {
@@ -12,6 +13,8 @@ interface DbOffer {
   bank_offer: string | null;
   best_deal: boolean;
   url: string | null;
+  affiliate_url?: string | null;
+  canonical_product_url?: string | null;
   stores: { id: string; name: string } | { id: string; name: string }[] | null;
 }
 
@@ -51,7 +54,7 @@ function mapOffer(o: DbOffer): StorePrice {
     delivery: o.delivery ?? "",
     bankOffer: o.bank_offer ?? "",
     bestDeal: o.best_deal,
-    url: o.url ?? "#",
+    url: resolveOfferUrl(o),
   };
 }
 
@@ -79,7 +82,7 @@ function mapProduct(p: DbProduct): Product {
 }
 
 const PRODUCT_SELECT =
-  "id,name,brand,category,image,images,specs,pros,cons,rating,reviews_count,lowest_price,highest_price,created_at,product_offers(price,original_price,discount,rating,reviews,delivery,bank_offer,best_deal,url,stores(id,name))";
+  `id,name,brand,category,image,images,specs,pros,cons,rating,reviews_count,lowest_price,highest_price,created_at,product_offers(price,original_price,discount,rating,reviews,delivery,bank_offer,best_deal,${OFFER_LINK_COLUMNS},stores(id,name))`;
 
 export interface CatalogFilters {
   q?: string;

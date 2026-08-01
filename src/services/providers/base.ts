@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { OFFER_LINK_COLUMNS, resolveOfferUrl } from "../affiliate-link";
 import type { ProductProvider, ProviderOffer, ProviderQuery, StoreName } from "./types";
 
 /**
@@ -15,6 +16,20 @@ export abstract class SupabaseBackedProvider implements ProductProvider {
     return "in_stock";
   }
 
+  /**
+   * Resolves the outbound link for an offer: affiliate link first, then the
+   * canonical product page, then the legacy `url` column. Providers with their
+   * own affiliate tagging can override this without interface changes.
+   */
+  protected resolveProductUrl(offer: {
+    url?: string | null;
+    affiliate_url?: string | null;
+    canonical_product_url?: string | null;
+  }): string {
+    return resolveOfferUrl(offer);
+  }
+
+
   protected parseBankOffer(raw: string | null | undefined): ProviderOffer["bankOffers"] {
     if (!raw) return [];
     // Very light parsing — e.g. "HDFC Bank: 10% instant discount"
@@ -29,7 +44,7 @@ export abstract class SupabaseBackedProvider implements ProductProvider {
     let req = supabase
       .from("products")
       .select(
-        "id,name,brand,category,image,images,specs,rating,reviews_count,product_offers!inner(price,original_price,rating,reviews,delivery,bank_offer,url,stores!inner(id,name))"
+        `id,name,brand,category,image,images,specs,rating,reviews_count,product_offers!inner(price,original_price,rating,reviews,delivery,bank_offer,${OFFER_LINK_COLUMNS},stores!inner(id,name))`
       )
       .eq("product_offers.stores.name", this.store)
       .limit(limit);
@@ -66,7 +81,7 @@ export abstract class SupabaseBackedProvider implements ProductProvider {
           reviewCount: offer.reviews ?? row.reviews_count,
           store: this.store,
           storeId: store.id,
-          productUrl: offer.url ?? "#",
+          productUrl: this.resolveProductUrl(offer),
           availability: this.mapAvailability(),
           deliveryTime: offer.delivery ?? "Standard delivery",
           bankOffers: this.parseBankOffer(offer.bank_offer),
