@@ -12,6 +12,8 @@ interface DbOffer {
   bank_offer: string | null;
   best_deal: boolean;
   url: string | null;
+  affiliate_url?: string | null;
+  canonical_product_url?: string | null;
   stores: { id: string; name: string } | { id: string; name: string }[] | null;
 }
 
