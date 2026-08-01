@@ -67,7 +67,7 @@ export abstract class SupabaseBackedProvider implements ProductProvider {
           reviewCount: offer.reviews ?? row.reviews_count,
           store: this.store,
           storeId: store.id,
-          productUrl: offer.url ?? "#",
+          productUrl: this.resolveProductUrl(offer),
           availability: this.mapAvailability(),
           deliveryTime: offer.delivery ?? "Standard delivery",
           bankOffers: this.parseBankOffer(offer.bank_offer),
