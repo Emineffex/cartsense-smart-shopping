@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { OFFER_LINK_COLUMNS, resolveOfferUrl } from "./affiliate-link";
 import type { Product, Store, StorePrice } from "@/lib/sample-data";
 
 interface DbOffer {
