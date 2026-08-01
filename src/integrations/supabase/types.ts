@@ -251,8 +251,10 @@ export type Database = {
       }
       product_offers: {
         Row: {
+          affiliate_url: string | null
           bank_offer: string | null
           best_deal: boolean
+          canonical_product_url: string | null
           delivery: string | null
           discount: number
           id: string
@@ -266,8 +268,10 @@ export type Database = {
           url: string | null
         }
         Insert: {
+          affiliate_url?: string | null
           bank_offer?: string | null
           best_deal?: boolean
+          canonical_product_url?: string | null
           delivery?: string | null
           discount?: number
           id?: string
@@ -281,8 +285,10 @@ export type Database = {
           url?: string | null
         }
         Update: {
+          affiliate_url?: string | null
           bank_offer?: string | null
           best_deal?: boolean
+          canonical_product_url?: string | null
           delivery?: string | null
           discount?: number
           id?: string
