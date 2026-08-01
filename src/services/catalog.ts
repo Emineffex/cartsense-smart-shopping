@@ -82,7 +82,7 @@ function mapProduct(p: DbProduct): Product {
 }
 
 const PRODUCT_SELECT =
-  "id,name,brand,category,image,images,specs,pros,cons,rating,reviews_count,lowest_price,highest_price,created_at,product_offers(price,original_price,discount,rating,reviews,delivery,bank_offer,best_deal,url,stores(id,name))";
+  `id,name,brand,category,image,images,specs,pros,cons,rating,reviews_count,lowest_price,highest_price,created_at,product_offers(price,original_price,discount,rating,reviews,delivery,bank_offer,best_deal,${OFFER_LINK_COLUMNS},stores(id,name))`;
 
 export interface CatalogFilters {
   q?: string;
