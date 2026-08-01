@@ -30,7 +30,7 @@ export abstract class SupabaseBackedProvider implements ProductProvider {
     let req = supabase
       .from("products")
       .select(
-        "id,name,brand,category,image,images,specs,rating,reviews_count,product_offers!inner(price,original_price,rating,reviews,delivery,bank_offer,url,stores!inner(id,name))"
+        `id,name,brand,category,image,images,specs,rating,reviews_count,product_offers!inner(price,original_price,rating,reviews,delivery,bank_offer,${OFFER_LINK_COLUMNS},stores!inner(id,name))`
       )
       .eq("product_offers.stores.name", this.store)
       .limit(limit);
