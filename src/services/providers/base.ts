@@ -16,6 +16,20 @@ export abstract class SupabaseBackedProvider implements ProductProvider {
     return "in_stock";
   }
 
+  /**
+   * Resolves the outbound link for an offer: affiliate link first, then the
+   * canonical product page, then the legacy `url` column. Providers with their
+   * own affiliate tagging can override this without interface changes.
+   */
+  protected resolveProductUrl(offer: {
+    url?: string | null;
+    affiliate_url?: string | null;
+    canonical_product_url?: string | null;
+  }): string {
+    return resolveOfferUrl(offer);
+  }
+
+
   protected parseBankOffer(raw: string | null | undefined): ProviderOffer["bankOffers"] {
     if (!raw) return [];
     // Very light parsing — e.g. "HDFC Bank: 10% instant discount"
