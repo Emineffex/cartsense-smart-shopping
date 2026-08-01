@@ -54,7 +54,7 @@ function mapOffer(o: DbOffer): StorePrice {
     delivery: o.delivery ?? "",
     bankOffer: o.bank_offer ?? "",
     bestDeal: o.best_deal,
-    url: o.url ?? "#",
+    url: resolveOfferUrl(o),
   };
 }
 
