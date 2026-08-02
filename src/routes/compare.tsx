@@ -1,13 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQueries } from "@tanstack/react-query";
 import { Check, Star, Truck, Tag, Trophy } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { AnimatedBackground } from "@/components/animated-background";
+import { MultiCompare } from "@/components/multi-compare";
 import { formatINR } from "@/lib/format";
-import { useEffect, useState } from "react";
-import { useProduct, useProductSummaries } from "@/services/catalog";
+import { useEffect, useMemo, useState } from "react";
+import { useProduct, useProductSummaries, fetchProduct } from "@/services/catalog";
+import { useCompare } from "@/hooks/use-compare";
+import type { Product } from "@/lib/sample-data";
 import { logAffiliateClick } from "@/services/telemetry";
 import { useAuth } from "@/hooks/use-auth";
+
 
 type Search = { id?: string };
 
