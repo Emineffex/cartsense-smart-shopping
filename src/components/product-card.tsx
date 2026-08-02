@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { Star, TrendingDown } from "lucide-react";
 import type { Product } from "@/lib/sample-data";
 import { formatINR } from "@/lib/format";
+import { CompareToggle } from "@/components/compare-toggle";
+
 
 export function ProductCard({ product }: { product: Product }) {
   const savings = product.highestPrice - product.lowestPrice;
