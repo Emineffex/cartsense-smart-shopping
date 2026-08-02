@@ -26,7 +26,9 @@ export function ProductCard({ product }: { product: Product }) {
             Save {savingsPct}%
           </span>
         )}
+        <CompareToggle productId={product.id} className="absolute right-3 top-3 shadow" />
       </div>
+
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
