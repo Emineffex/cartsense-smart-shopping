@@ -153,7 +153,9 @@ function ProductDetails() {
                 >
                   <Heart className={`h-4 w-4 ${isSaved ? "fill-current" : ""}`} /> {isSaved ? "Saved" : "Save"}
                 </button>
+                <CompareToggle productId={product.id} variant="button" />
               </div>
+
             </div>
 
             {/* AI recommendation placeholder */}
