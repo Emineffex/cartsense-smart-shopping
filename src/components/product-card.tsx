@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { Star, TrendingDown } from "lucide-react";
 import type { Product } from "@/lib/sample-data";
 import { formatINR } from "@/lib/format";
+import { CompareToggle } from "@/components/compare-toggle";
+
 
 export function ProductCard({ product }: { product: Product }) {
   const savings = product.highestPrice - product.lowestPrice;
@@ -24,7 +26,9 @@ export function ProductCard({ product }: { product: Product }) {
             Save {savingsPct}%
           </span>
         )}
+        <CompareToggle productId={product.id} className="absolute right-3 top-3 shadow" />
       </div>
+
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">

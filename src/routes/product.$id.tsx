@@ -10,6 +10,8 @@ import { useProduct, useProducts, usePriceHistory, type PricePoint } from "@/ser
 import { useAuth } from "@/hooks/use-auth";
 import { useToggleWishlist, useWishlist, useCreateAlert } from "@/services/user-data";
 import { logStoreClick, logAffiliateClick } from "@/services/telemetry";
+import { CompareToggle } from "@/components/compare-toggle";
+
 
 export const Route = createFileRoute("/product/$id")({
   head: () => ({
@@ -153,7 +155,9 @@ function ProductDetails() {
                 >
                   <Heart className={`h-4 w-4 ${isSaved ? "fill-current" : ""}`} /> {isSaved ? "Saved" : "Save"}
                 </button>
+                <CompareToggle productId={product.id} variant="button" />
               </div>
+
             </div>
 
             {/* AI recommendation placeholder */}

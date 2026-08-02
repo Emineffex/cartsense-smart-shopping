@@ -1,13 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQueries } from "@tanstack/react-query";
 import { Check, Star, Truck, Tag, Trophy } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { AnimatedBackground } from "@/components/animated-background";
+import { MultiCompare } from "@/components/multi-compare";
 import { formatINR } from "@/lib/format";
-import { useEffect, useState } from "react";
-import { useProduct, useProductSummaries } from "@/services/catalog";
+import { useEffect, useMemo, useState } from "react";
+import { useProduct, useProductSummaries, fetchProduct } from "@/services/catalog";
+import { useCompare } from "@/hooks/use-compare";
+import type { Product } from "@/lib/sample-data";
 import { logAffiliateClick } from "@/services/telemetry";
 import { useAuth } from "@/hooks/use-auth";
+
 
 type Search = { id?: string };
 
@@ -35,10 +40,24 @@ function ComparePage() {
 
   const { data: product } = useProduct(selected);
   const { user } = useAuth();
-  const trackBuy = (s: { storeId?: string; store: string; url: string }) => {
-    if (!s.storeId || !product) return;
-    logAffiliateClick({ storeId: s.storeId, productId: product.id, provider: s.store, destinationUrl: s.url, userId: user?.id });
+  const trackBuy = (s: { storeId?: string; store: string; url: string }, productId?: string) => {
+    const pid = productId ?? product?.id;
+    if (!s.storeId || !pid) return;
+    logAffiliateClick({ storeId: s.storeId, productId: pid, provider: s.store, destinationUrl: s.url, userId: user?.id });
   };
+
+  // Multi-product comparison (up to 6) — ids persisted via the compare store.
+  const { ids } = useCompare();
+  const compareQueries = useQueries({
+    queries: ids.map((cid) => ({ queryKey: ["product", cid], queryFn: () => fetchProduct(cid) })),
+  });
+  const compareLoading = compareQueries.some((q) => q.isLoading);
+  const compareProducts = useMemo(
+    () => compareQueries.map((q) => q.data).filter((p): p is Product => !!p),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [compareQueries.map((q) => q.data?.id ?? "").join(",")],
+  );
+
 
   return (
     <div className="relative min-h-screen">
@@ -65,6 +84,21 @@ function ComparePage() {
             ))}
           </select>
         </div>
+
+        {/* Multi-product comparison */}
+        <section className="mb-14">
+          <h2 className="font-display text-2xl font-bold">Compare products side-by-side</h2>
+          <p className="mb-4 mt-1 text-sm text-muted-foreground">
+            Add up to 6 products from Search or Product Details. Best value in each row is highlighted.
+          </p>
+          <MultiCompare
+            products={compareProducts}
+            isLoading={compareLoading}
+            onBuy={(p, s) => trackBuy(s, p.id)}
+          />
+        </section>
+
+
 
         {!product ? (
           <div className="h-64 animate-pulse rounded-3xl bg-card/50" />
