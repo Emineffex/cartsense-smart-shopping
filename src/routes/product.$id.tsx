@@ -10,6 +10,8 @@ import { useProduct, useProducts, usePriceHistory, type PricePoint } from "@/ser
 import { useAuth } from "@/hooks/use-auth";
 import { useToggleWishlist, useWishlist, useCreateAlert } from "@/services/user-data";
 import { logStoreClick, logAffiliateClick } from "@/services/telemetry";
+import { CompareToggle } from "@/components/compare-toggle";
+
 
 export const Route = createFileRoute("/product/$id")({
   head: () => ({
