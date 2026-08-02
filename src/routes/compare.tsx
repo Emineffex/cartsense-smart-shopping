@@ -40,10 +40,24 @@ function ComparePage() {
 
   const { data: product } = useProduct(selected);
   const { user } = useAuth();
-  const trackBuy = (s: { storeId?: string; store: string; url: string }) => {
-    if (!s.storeId || !product) return;
-    logAffiliateClick({ storeId: s.storeId, productId: product.id, provider: s.store, destinationUrl: s.url, userId: user?.id });
+  const trackBuy = (s: { storeId?: string; store: string; url: string }, productId?: string) => {
+    const pid = productId ?? product?.id;
+    if (!s.storeId || !pid) return;
+    logAffiliateClick({ storeId: s.storeId, productId: pid, provider: s.store, destinationUrl: s.url, userId: user?.id });
   };
+
+  // Multi-product comparison (up to 6) — ids persisted via the compare store.
+  const { ids } = useCompare();
+  const compareQueries = useQueries({
+    queries: ids.map((cid) => ({ queryKey: ["product", cid], queryFn: () => fetchProduct(cid) })),
+  });
+  const compareLoading = compareQueries.some((q) => q.isLoading);
+  const compareProducts = useMemo(
+    () => compareQueries.map((q) => q.data).filter((p): p is Product => !!p),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [compareQueries.map((q) => q.data?.id ?? "").join(",")],
+  );
+
 
   return (
     <div className="relative min-h-screen">
