@@ -85,6 +85,21 @@ function ComparePage() {
           </select>
         </div>
 
+        {/* Multi-product comparison */}
+        <section className="mb-14">
+          <h2 className="font-display text-2xl font-bold">Compare products side-by-side</h2>
+          <p className="mb-4 mt-1 text-sm text-muted-foreground">
+            Add up to 6 products from Search or Product Details. Best value in each row is highlighted.
+          </p>
+          <MultiCompare
+            products={compareProducts}
+            isLoading={compareLoading}
+            onBuy={(p, s) => trackBuy(s, p.id)}
+          />
+        </section>
+
+
+
         {!product ? (
           <div className="h-64 animate-pulse rounded-3xl bg-card/50" />
         ) : (
