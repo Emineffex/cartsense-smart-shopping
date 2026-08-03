@@ -96,28 +96,8 @@ function ProductDetails() {
 
         <div className="grid gap-10 lg:grid-cols-2">
           {/* Gallery */}
-          <div>
-            <div className="overflow-hidden rounded-3xl border border-border bg-card">
-              <img
-                src={product.images[active] ?? product.image}
-                alt={product.name}
-                className="aspect-square w-full object-cover"
-              />
-            </div>
-            <div className="mt-4 grid grid-cols-4 gap-3">
-              {product.images.map((src, i) => (
-                <button
-                  key={src}
-                  onClick={() => setActive(i)}
-                  className={`overflow-hidden rounded-xl border-2 transition-all ${
-                    i === active ? "border-primary shadow-lg shadow-primary/20" : "border-border hover:border-primary/50"
-                  }`}
-                >
-                  <img src={src} alt="" className="aspect-square w-full object-cover" />
-                </button>
-              ))}
-            </div>
-          </div>
+          <ProductGallery product={product} />
+
 
           {/* Details */}
           <div>
