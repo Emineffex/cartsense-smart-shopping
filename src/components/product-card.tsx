@@ -3,6 +3,7 @@ import { Star, TrendingDown } from "lucide-react";
 import type { Product } from "@/lib/sample-data";
 import { formatINR } from "@/lib/format";
 import { CompareToggle } from "@/components/compare-toggle";
+import { ProductImage } from "@/components/product-image";
 
 
 export function ProductCard({ product }: { product: Product }) {

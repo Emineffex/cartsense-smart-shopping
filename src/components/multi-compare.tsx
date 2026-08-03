@@ -4,6 +4,7 @@ import type { Product } from "@/lib/sample-data";
 import { formatINR } from "@/lib/format";
 import { useCompare } from "@/hooks/use-compare";
 import { SPEC_ROWS, bestIndex, bestPriceOf, buildInsight, computeBadges } from "@/lib/compare-insights";
+import { ProductImage } from "@/components/product-image";
 
 export function MultiCompare({
   products,
