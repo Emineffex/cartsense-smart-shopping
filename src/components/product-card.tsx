@@ -15,10 +15,11 @@ export function ProductCard({ product }: { product: Product }) {
       className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10"
     >
       <div className="relative aspect-square overflow-hidden bg-muted">
-        <img
+        <ProductImage
           src={product.image}
           alt={product.name}
-          loading="lazy"
+          label={product.brand}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
         {savingsPct > 0 && (
