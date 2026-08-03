@@ -15,6 +15,7 @@ import { Footer } from "@/components/footer";
 import { AnimatedBackground } from "@/components/animated-background";
 import { formatINR } from "@/lib/format";
 import { useAuth } from "@/hooks/use-auth";
+import { ProductImage } from "@/components/product-image";
 import {
   useWishlist,
   useToggleWishlist,
@@ -188,7 +189,7 @@ function SavedProducts() {
           {wishlist.map(({ product }) => (
             <div key={product.id} className="group flex gap-4 rounded-2xl border border-border bg-background p-4 transition-all hover:border-primary/50 hover:shadow-md">
               <Link to="/product/$id" params={{ id: product.id }} className="flex flex-1 gap-4 min-w-0">
-                <img src={product.image} alt="" className="h-20 w-20 rounded-lg object-cover" />
+                <ProductImage src={product.image} alt="" className="h-20 w-20 rounded-lg object-cover" />
                 <div className="min-w-0 flex-1">
                   <p className="line-clamp-2 text-sm font-semibold">{product.name}</p>
                   <p className="mt-1 text-lg font-bold">{formatINR(product.lowestPrice)}</p>
@@ -236,7 +237,7 @@ function PriceAlerts() {
             const diff = a.product.lowestPrice - a.targetPrice;
             return (
               <div key={a.id} className="flex items-center gap-4 rounded-2xl border border-border bg-background p-4">
-                <img src={a.product.image} alt="" className="h-14 w-14 rounded-lg object-cover" />
+                <ProductImage src={a.product.image} alt="" className="h-14 w-14 rounded-lg object-cover" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold">{a.product.name}</p>
                   <p className="text-xs text-muted-foreground">
@@ -290,7 +291,7 @@ function RecentlyViewed() {
               params={{ id: product.id }}
               className="flex gap-4 rounded-2xl border border-border bg-background p-4 hover:border-primary/50"
             >
-              <img src={product.image} alt="" className="h-20 w-20 rounded-lg object-cover" />
+              <ProductImage src={product.image} alt="" className="h-20 w-20 rounded-lg object-cover" />
               <div className="flex-1">
                 <p className="line-clamp-2 text-sm font-semibold">{product.name}</p>
                 <p className="mt-1 text-lg font-bold">{formatINR(product.lowestPrice)}</p>

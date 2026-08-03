@@ -12,6 +12,7 @@ import { useCompare } from "@/hooks/use-compare";
 import type { Product } from "@/lib/sample-data";
 import { logAffiliateClick } from "@/services/telemetry";
 import { useAuth } from "@/hooks/use-auth";
+import { ProductImage } from "@/components/product-image";
 
 
 type Search = { id?: string };
@@ -106,7 +107,7 @@ function ComparePage() {
           <>
             <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
               <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-                <img src={product.image} alt={product.name} className="h-32 w-32 rounded-xl object-cover" />
+                <ProductImage src={product.image} alt={product.name} className="h-32 w-32 rounded-xl object-cover" />
                 <div className="flex-1">
                   <p className="text-xs font-semibold uppercase text-muted-foreground">{product.brand}</p>
                   <h2 className="mt-1 font-display text-2xl font-bold">{product.name}</h2>
@@ -161,7 +162,7 @@ function ComparePage() {
                         </div>
                       </td>
                       <td className="px-4 py-4">
-                        <img src={product.image} alt="" className="h-12 w-12 rounded-md object-cover" />
+                        <ProductImage src={product.image} alt="" className="h-12 w-12 rounded-md object-cover" />
                       </td>
                       <td className="px-4 py-4 font-bold text-lg">{formatINR(s.price)}</td>
                       <td className="px-4 py-4 text-muted-foreground line-through">{formatINR(s.originalPrice)}</td>

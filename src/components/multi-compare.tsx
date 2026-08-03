@@ -4,6 +4,7 @@ import type { Product } from "@/lib/sample-data";
 import { formatINR } from "@/lib/format";
 import { useCompare } from "@/hooks/use-compare";
 import { SPEC_ROWS, bestIndex, bestPriceOf, buildInsight, computeBadges } from "@/lib/compare-insights";
+import { ProductImage } from "@/components/product-image";
 
 export function MultiCompare({
   products,
@@ -66,7 +67,7 @@ export function MultiCompare({
               {products.map((p) => (
                 <th key={p.id} className={`${colWidth} border-l border-border px-4 py-4 text-left align-top`}>
                   <div className="flex items-start justify-between gap-2">
-                    <img src={p.image} alt={p.name} className="h-16 w-16 rounded-lg object-cover" />
+                    <ProductImage src={p.image} alt={p.name} label={p.brand} className="h-16 w-16 rounded-lg object-cover" />
                     <button
                       onClick={() => remove(p.id)}
                       aria-label={`Remove ${p.name} from comparison`}
