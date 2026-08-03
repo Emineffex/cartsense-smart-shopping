@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
 import { Check, X, Sparkles, Star, Bell, Heart, Trophy } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
@@ -11,6 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToggleWishlist, useWishlist, useCreateAlert } from "@/services/user-data";
 import { logStoreClick, logAffiliateClick } from "@/services/telemetry";
 import { CompareToggle } from "@/components/compare-toggle";
+import { ProductGallery } from "@/components/product-gallery";
 
 
 export const Route = createFileRoute("/product/$id")({
@@ -31,9 +31,6 @@ function ProductDetails() {
   const { data: wishlist = [] } = useWishlist();
   const toggleWishlist = useToggleWishlist();
   const createAlert = useCreateAlert();
-  const [active, setActive] = useState(0);
-
-  useEffect(() => setActive(0), [id]);
 
   if (isLoading) {
     return (
