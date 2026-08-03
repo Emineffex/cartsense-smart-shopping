@@ -15,8 +15,8 @@ import { Footer } from "@/components/footer";
 import { AnimatedBackground } from "@/components/animated-background";
 import { formatINR } from "@/lib/format";
 import { useAuth } from "@/hooks/use-auth";
-import {
 import { ProductImage } from "@/components/product-image";
+import {
   useWishlist,
   useToggleWishlist,
   usePriceAlerts,
