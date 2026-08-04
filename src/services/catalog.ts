@@ -25,6 +25,8 @@ interface DbProduct {
   category: string;
   image: string;
   images: unknown;
+  model_url?: string | null;
+  model_poster_url?: string | null;
   specs: unknown;
   pros: unknown;
   cons: unknown;
