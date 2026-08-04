@@ -24,6 +24,9 @@ export interface Product {
   category: string;
   image: string;
   images: string[];
+  /** Optional interactive 3D asset (.glb/.gltf) and its poster frame. */
+  modelUrl?: string | null;
+  modelPosterUrl?: string | null;
   lowestPrice: number;
   highestPrice: number;
   rating: number;

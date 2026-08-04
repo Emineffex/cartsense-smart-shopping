@@ -25,6 +25,8 @@ interface DbProduct {
   category: string;
   image: string;
   images: unknown;
+  model_url?: string | null;
+  model_poster_url?: string | null;
   specs: unknown;
   pros: unknown;
   cons: unknown;
@@ -69,6 +71,8 @@ function mapProduct(p: DbProduct): Product {
     category: p.category,
     image: p.image,
     images: asArray<string>(p.images),
+    modelUrl: p.model_url ?? null,
+    modelPosterUrl: p.model_poster_url ?? null,
     lowestPrice: Number(p.lowest_price),
     highestPrice: Number(p.highest_price),
     rating: Number(p.rating),
@@ -82,7 +86,7 @@ function mapProduct(p: DbProduct): Product {
 }
 
 const PRODUCT_SELECT =
-  `id,name,brand,category,image,images,specs,pros,cons,rating,reviews_count,lowest_price,highest_price,created_at,product_offers(price,original_price,discount,rating,reviews,delivery,bank_offer,best_deal,${OFFER_LINK_COLUMNS},stores(id,name))`;
+  `id,name,brand,category,image,images,model_url,model_poster_url,specs,pros,cons,rating,reviews_count,lowest_price,highest_price,created_at,product_offers(price,original_price,discount,rating,reviews,delivery,bank_offer,best_deal,${OFFER_LINK_COLUMNS},stores(id,name))`;
 
 export interface CatalogFilters {
   q?: string;

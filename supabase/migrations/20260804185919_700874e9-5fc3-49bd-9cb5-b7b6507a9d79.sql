@@ -1,0 +1,1 @@
+UPDATE public.products SET model_url = NULL WHERE id = 'prd_iphone-15-pro-max';
