@@ -329,6 +329,8 @@ export type Database = {
           image: string
           images: Json
           lowest_price: number
+          model_poster_url: string | null
+          model_url: string | null
           name: string
           pros: Json
           rating: number
@@ -346,6 +348,8 @@ export type Database = {
           image: string
           images?: Json
           lowest_price?: number
+          model_poster_url?: string | null
+          model_url?: string | null
           name: string
           pros?: Json
           rating?: number
@@ -363,6 +367,8 @@ export type Database = {
           image?: string
           images?: Json
           lowest_price?: number
+          model_poster_url?: string | null
+          model_url?: string | null
           name?: string
           pros?: Json
           rating?: number
