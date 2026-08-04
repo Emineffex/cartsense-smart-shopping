@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ImageOff } from "lucide-react";
 import { isUsableProductImage, placeholderHue } from "@/lib/product-image";
+import { getMediaStatus, setMediaStatus } from "@/lib/product-media";
 import { cn } from "@/lib/utils";
 
 interface ProductImageProps {
@@ -17,11 +18,13 @@ interface ProductImageProps {
 /**
  * Renders a real product photo, or a clean branded "Image coming soon" tile.
  * Never falls back to unrelated stock imagery. Reserves the same box either way
- * so there is no layout shift.
+ * so there is no layout shift. Previously loaded/failed URLs are remembered in
+ * the media cache so repeat visits skip the blur-up (or the broken request).
  */
 export function ProductImage({ src, alt, className, label, eager, sizes }: ProductImageProps) {
-  const [failed, setFailed] = useState(false);
-  const [loaded, setLoaded] = useState(false);
+  const cached = getMediaStatus(src);
+  const [failed, setFailed] = useState(cached === "failed");
+  const [loaded, setLoaded] = useState(cached === "ok");
   const usable = isUsableProductImage(src) && !failed;
 
   if (!usable) {
@@ -31,7 +34,7 @@ export function ProductImage({ src, alt, className, label, eager, sizes }: Produ
         role="img"
         aria-label={`${alt} — image coming soon`}
         className={cn(
-          "flex flex-col items-center justify-center gap-1.5 bg-muted text-center",
+          "flex flex-col items-center justify-center gap-1.5 bg-muted text-center animate-fade-in",
           className,
         )}
         style={{
@@ -52,19 +55,30 @@ export function ProductImage({ src, alt, className, label, eager, sizes }: Produ
   }
 
   return (
-    <img
-      src={src ?? undefined}
-      alt={alt}
-      loading={eager ? "eager" : "lazy"}
-      decoding="async"
-      sizes={sizes}
-      onLoad={() => setLoaded(true)}
-      onError={() => setFailed(true)}
-      className={cn(
-        "bg-muted transition-[filter,opacity] duration-300",
-        loaded ? "opacity-100 blur-0" : "opacity-70 blur-md",
-        className,
+    <div className={cn("relative overflow-hidden", className)}>
+      {!loaded && (
+        <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-muted via-muted/60 to-muted" />
       )}
-    />
+      <img
+        src={src ?? undefined}
+        alt={alt}
+        loading={eager ? "eager" : "lazy"}
+        decoding="async"
+        fetchPriority={eager ? "high" : "auto"}
+        sizes={sizes}
+        onLoad={() => {
+          setMediaStatus(src, "ok");
+          setLoaded(true);
+        }}
+        onError={() => {
+          setMediaStatus(src, "failed");
+          setFailed(true);
+        }}
+        className={cn(
+          "h-full w-full bg-muted object-cover transition-[filter,opacity,transform] duration-500",
+          loaded ? "scale-100 opacity-100 blur-0" : "scale-[1.02] opacity-0 blur-md",
+        )}
+      />
+    </div>
   );
 }
