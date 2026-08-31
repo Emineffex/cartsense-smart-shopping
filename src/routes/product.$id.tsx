@@ -177,16 +177,18 @@ function ProductDetails() {
                 <p className="mt-2 text-xs text-primary font-semibold">{s.discount}% off · {s.delivery}</p>
                 <a
                   href={s.url}
-                  onClick={() => {
+                  onClick={(e) => {
+                    if (!s.url || s.url === "#") { e.preventDefault(); return; }
                     if (s.storeId) void logStoreClick(s.storeId, product.id, user?.id);
                     if (s.storeId) logAffiliateClick({ storeId: s.storeId, productId: product.id, provider: s.store, destinationUrl: s.url, userId: user?.id });
                   }}
                   target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-foreground px-3 py-2 text-xs font-semibold text-background hover:opacity-90"
+                  rel="noopener noreferrer sponsored"
+                  className={`mt-4 inline-flex w-full items-center justify-center rounded-lg bg-foreground px-3 py-2 text-xs font-semibold text-background hover:opacity-90 ${!s.url || s.url === "#" ? "pointer-events-none opacity-50" : ""}`}
                 >
-                  Buy on {s.store}
+                  {!s.url || s.url === "#" ? "Link unavailable" : `Buy on ${s.store}`}
                 </a>
+
               </div>
             ))}
           </div>
