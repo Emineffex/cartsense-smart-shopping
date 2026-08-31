@@ -57,15 +57,23 @@ export interface AffiliateClickInput {
 export function logAffiliateClick(input: AffiliateClickInput): void {
   if (!input.storeId) return;
   try {
-    void supabase.from("affiliate_clicks").insert({
-      store_id: input.storeId,
-      product_id: input.productId ?? null,
-      user_id: input.userId ?? null,
-      provider: input.provider ?? null,
-      destination_url: input.destinationUrl ?? null,
-      session_id: getSessionId() || null,
-    });
+    // `.then()` is required: the query builder is lazy and only executes when awaited.
+    void supabase
+      .from("affiliate_clicks")
+      .insert({
+        store_id: input.storeId,
+        product_id: input.productId ?? null,
+        user_id: input.userId ?? null,
+        provider: input.provider ?? null,
+        destination_url: input.destinationUrl ?? null,
+        session_id: getSessionId() || null,
+      })
+      .then(
+        () => undefined,
+        () => undefined,
+      );
   } catch {
     /* no-op */
   }
+
 }
