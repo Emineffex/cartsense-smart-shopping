@@ -252,51 +252,66 @@ export type Database = {
       product_offers: {
         Row: {
           affiliate_url: string | null
+          availability: string
           bank_offer: string | null
           best_deal: boolean
           canonical_product_url: string | null
+          created_at: string
           delivery: string | null
           discount: number
           id: string
+          is_active: boolean
           original_price: number
           price: number
           product_id: string
           rating: number
           reviews: number
+          sku: string | null
+          stock_quantity: number
           store_id: string
           updated_at: string
           url: string | null
         }
         Insert: {
           affiliate_url?: string | null
+          availability?: string
           bank_offer?: string | null
           best_deal?: boolean
           canonical_product_url?: string | null
+          created_at?: string
           delivery?: string | null
           discount?: number
           id?: string
+          is_active?: boolean
           original_price: number
           price: number
           product_id: string
           rating?: number
           reviews?: number
+          sku?: string | null
+          stock_quantity?: number
           store_id: string
           updated_at?: string
           url?: string | null
         }
         Update: {
           affiliate_url?: string | null
+          availability?: string
           bank_offer?: string | null
           best_deal?: boolean
           canonical_product_url?: string | null
+          created_at?: string
           delivery?: string | null
           discount?: number
           id?: string
+          is_active?: boolean
           original_price?: number
           price?: number
           product_id?: string
           rating?: number
           reviews?: number
+          sku?: string | null
+          stock_quantity?: number
           store_id?: string
           updated_at?: string
           url?: string | null
@@ -324,6 +339,8 @@ export type Database = {
           category: string
           cons: Json
           created_at: string
+          created_by: string | null
+          description: string | null
           highest_price: number
           id: string
           image: string
@@ -343,6 +360,8 @@ export type Database = {
           category: string
           cons?: Json
           created_at?: string
+          created_by?: string | null
+          description?: string | null
           highest_price?: number
           id: string
           image: string
@@ -362,6 +381,8 @@ export type Database = {
           category?: string
           cons?: Json
           created_at?: string
+          created_by?: string | null
+          description?: string | null
           highest_price?: number
           id?: string
           image?: string
@@ -473,6 +494,59 @@ export type Database = {
           },
         ]
       }
+      retailer_profiles: {
+        Row: {
+          address: string | null
+          business_name: string
+          created_at: string
+          gstin: string | null
+          id: string
+          logo_url: string | null
+          owner_name: string
+          phone: string | null
+          store_id: string | null
+          updated_at: string
+          user_id: string
+          verification_status: string
+        }
+        Insert: {
+          address?: string | null
+          business_name: string
+          created_at?: string
+          gstin?: string | null
+          id?: string
+          logo_url?: string | null
+          owner_name: string
+          phone?: string | null
+          store_id?: string | null
+          updated_at?: string
+          user_id: string
+          verification_status?: string
+        }
+        Update: {
+          address?: string | null
+          business_name?: string
+          created_at?: string
+          gstin?: string | null
+          id?: string
+          logo_url?: string | null
+          owner_name?: string
+          phone?: string | null
+          store_id?: string | null
+          updated_at?: string
+          user_id?: string
+          verification_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "retailer_profiles_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       search_events: {
         Row: {
           created_at: string
@@ -563,27 +637,39 @@ export type Database = {
           created_at: string
           id: string
           is_active: boolean
+          is_retailer: boolean
+          logo_url: string | null
           name: string
+          owner_user_id: string | null
           slug: string
           tagline: string | null
+          verification_status: string
         }
         Insert: {
           affiliate_url?: string | null
           created_at?: string
           id?: string
           is_active?: boolean
+          is_retailer?: boolean
+          logo_url?: string | null
           name: string
+          owner_user_id?: string | null
           slug: string
           tagline?: string | null
+          verification_status?: string
         }
         Update: {
           affiliate_url?: string | null
           created_at?: string
           id?: string
           is_active?: boolean
+          is_retailer?: boolean
+          logo_url?: string | null
           name?: string
+          owner_user_id?: string | null
           slug?: string
           tagline?: string | null
+          verification_status?: string
         }
         Relationships: []
       }
@@ -664,9 +750,26 @@ export type Database = {
         }
         Returns: boolean
       }
+      owns_store: { Args: { _store_id: string }; Returns: boolean }
+      register_retailer: {
+        Args: {
+          _address?: string
+          _business_name: string
+          _gstin?: string
+          _logo_url?: string
+          _owner_name: string
+          _phone?: string
+        }
+        Returns: string
+      }
+      set_retailer_status: {
+        Args: { _profile_id: string; _status: string }
+        Returns: boolean
+      }
+      store_is_public: { Args: { _store_id: string }; Returns: boolean }
     }
     Enums: {
-      app_role: "admin" | "user"
+      app_role: "admin" | "user" | "retailer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -682,12 +785,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -711,11 +814,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -736,11 +839,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -761,11 +864,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -778,11 +881,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -794,7 +897,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user"],
+      app_role: ["admin", "user", "retailer"],
     },
   },
 } as const
