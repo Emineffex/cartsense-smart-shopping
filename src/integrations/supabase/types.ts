@@ -751,6 +751,21 @@ export type Database = {
         Returns: boolean
       }
       owns_store: { Args: { _store_id: string }; Returns: boolean }
+      register_retailer: {
+        Args: {
+          _address?: string
+          _business_name: string
+          _gstin?: string
+          _logo_url?: string
+          _owner_name: string
+          _phone?: string
+        }
+        Returns: string
+      }
+      set_retailer_status: {
+        Args: { _profile_id: string; _status: string }
+        Returns: boolean
+      }
       store_is_public: { Args: { _store_id: string }; Returns: boolean }
     }
     Enums: {
