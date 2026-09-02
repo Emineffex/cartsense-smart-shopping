@@ -252,51 +252,66 @@ export type Database = {
       product_offers: {
         Row: {
           affiliate_url: string | null
+          availability: string
           bank_offer: string | null
           best_deal: boolean
           canonical_product_url: string | null
+          created_at: string
           delivery: string | null
           discount: number
           id: string
+          is_active: boolean
           original_price: number
           price: number
           product_id: string
           rating: number
           reviews: number
+          sku: string | null
+          stock_quantity: number
           store_id: string
           updated_at: string
           url: string | null
         }
         Insert: {
           affiliate_url?: string | null
+          availability?: string
           bank_offer?: string | null
           best_deal?: boolean
           canonical_product_url?: string | null
+          created_at?: string
           delivery?: string | null
           discount?: number
           id?: string
+          is_active?: boolean
           original_price: number
           price: number
           product_id: string
           rating?: number
           reviews?: number
+          sku?: string | null
+          stock_quantity?: number
           store_id: string
           updated_at?: string
           url?: string | null
         }
         Update: {
           affiliate_url?: string | null
+          availability?: string
           bank_offer?: string | null
           best_deal?: boolean
           canonical_product_url?: string | null
+          created_at?: string
           delivery?: string | null
           discount?: number
           id?: string
+          is_active?: boolean
           original_price?: number
           price?: number
           product_id?: string
           rating?: number
           reviews?: number
+          sku?: string | null
+          stock_quantity?: number
           store_id?: string
           updated_at?: string
           url?: string | null
@@ -324,6 +339,8 @@ export type Database = {
           category: string
           cons: Json
           created_at: string
+          created_by: string | null
+          description: string | null
           highest_price: number
           id: string
           image: string
@@ -343,6 +360,8 @@ export type Database = {
           category: string
           cons?: Json
           created_at?: string
+          created_by?: string | null
+          description?: string | null
           highest_price?: number
           id: string
           image: string
@@ -362,6 +381,8 @@ export type Database = {
           category?: string
           cons?: Json
           created_at?: string
+          created_by?: string | null
+          description?: string | null
           highest_price?: number
           id?: string
           image?: string
@@ -473,6 +494,59 @@ export type Database = {
           },
         ]
       }
+      retailer_profiles: {
+        Row: {
+          address: string | null
+          business_name: string
+          created_at: string
+          gstin: string | null
+          id: string
+          logo_url: string | null
+          owner_name: string
+          phone: string | null
+          store_id: string | null
+          updated_at: string
+          user_id: string
+          verification_status: string
+        }
+        Insert: {
+          address?: string | null
+          business_name: string
+          created_at?: string
+          gstin?: string | null
+          id?: string
+          logo_url?: string | null
+          owner_name: string
+          phone?: string | null
+          store_id?: string | null
+          updated_at?: string
+          user_id: string
+          verification_status?: string
+        }
+        Update: {
+          address?: string | null
+          business_name?: string
+          created_at?: string
+          gstin?: string | null
+          id?: string
+          logo_url?: string | null
+          owner_name?: string
+          phone?: string | null
+          store_id?: string | null
+          updated_at?: string
+          user_id?: string
+          verification_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "retailer_profiles_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       search_events: {
         Row: {
           created_at: string
@@ -563,27 +637,39 @@ export type Database = {
           created_at: string
           id: string
           is_active: boolean
+          is_retailer: boolean
+          logo_url: string | null
           name: string
+          owner_user_id: string | null
           slug: string
           tagline: string | null
+          verification_status: string
         }
         Insert: {
           affiliate_url?: string | null
           created_at?: string
           id?: string
           is_active?: boolean
+          is_retailer?: boolean
+          logo_url?: string | null
           name: string
+          owner_user_id?: string | null
           slug: string
           tagline?: string | null
+          verification_status?: string
         }
         Update: {
           affiliate_url?: string | null
           created_at?: string
           id?: string
           is_active?: boolean
+          is_retailer?: boolean
+          logo_url?: string | null
           name?: string
+          owner_user_id?: string | null
           slug?: string
           tagline?: string | null
+          verification_status?: string
         }
         Relationships: []
       }
@@ -664,6 +750,8 @@ export type Database = {
         }
         Returns: boolean
       }
+      owns_store: { Args: { _store_id: string }; Returns: boolean }
+      store_is_public: { Args: { _store_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "user" | "retailer"
